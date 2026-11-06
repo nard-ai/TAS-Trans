@@ -41,6 +41,66 @@ export async function payrollProbe(): Promise<{ status: number; json: unknown }>
   }
 }
 
+type Incoming = {
+  method?: string;
+  url?: string;
+  body?: unknown;
+  text?: () => Promise<string>;
+};
+
+type Outgoing = {
+  statusCode: number;
+  setHeader: (name: string, value: string) => void;
+  write: (chunk: Uint8Array) => void;
+  end: (chunk?: Uint8Array | string) => void;
+};
+
+function isOutgoing(value: unknown): value is Outgoing {
+  return Boolean(value) && typeof (value as Outgoing).setHeader === "function" && typeof (value as Outgoing).end === "function";
+}
+
+async function readBody(req: Incoming, method: string): Promise<unknown> {
+  if (method === "GET" || method === "HEAD") return null;
+  if (typeof req.text === "function") {
+    const text = await req.text();
+    return text ? JSON.parse(text) : null;
+  }
+  if (typeof req.body === "string") return req.body ? JSON.parse(req.body) : null;
+  if (Buffer.isBuffer(req.body)) return JSON.parse(req.body.toString("utf8"));
+  return req.body ?? null;
+}
+
+function writeOut(res: Outgoing, out: { status: number; json: unknown }) {
+  const bytes = Buffer.from(JSON.stringify(out.json));
+  res.statusCode = out.status;
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store");
+  const size = 512 * 1024;
+  for (let i = 0; i < bytes.length; i += size) res.write(bytes.subarray(i, Math.min(i + size, bytes.length)));
+  res.end();
+}
+
+export async function serve(kind: "db" | "call", req: Incoming, res?: unknown): Promise<Response | void> {
+  const method = req?.method || (kind === "call" ? "POST" : "GET");
+  try {
+    const out = String(req?.url || "").includes("probe=1")
+      ? await payrollProbe()
+      : await payrollApi(kind, method, await readBody(req, method));
+    if (isOutgoing(res)) {
+      writeOut(res, out);
+      return;
+    }
+    return jsonResponse(out);
+  } catch (err) {
+    const out = { status: 500, json: { error: safeMessage(err) } };
+    if (isOutgoing(res)) {
+      writeOut(res, out);
+      return;
+    }
+    return jsonResponse(out);
+  }
+}
+
 // shortcut: the full desk is about 10MB. Vercel rejects a buffered function body over 4.5MB, so this streams.
 export function jsonResponse(out: { status: number; json: unknown }): Response {
   const bytes = Buffer.from(JSON.stringify(out.json));

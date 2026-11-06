@@ -1,7 +1,13 @@
-import { jsonResponse, payrollApi } from "../src/server/payroll-http";
+import { serve } from "../src/server/payroll-http";
 
-export async function POST(request: Request) {
-  const text = await request.text();
-  const body = text ? JSON.parse(text) : null;
-  return jsonResponse(await payrollApi("call", "POST", body));
+type Req = { method?: string; url?: string; body?: unknown; text?: () => Promise<string> };
+
+export const config = { runtime: "nodejs", maxDuration: 60 };
+
+export default function handler(req: Req, res?: unknown) {
+  return serve("call", req, res);
+}
+
+export function POST(req: Req) {
+  return serve("call", req);
 }
