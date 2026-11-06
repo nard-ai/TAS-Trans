@@ -1,6 +1,0 @@
-{
-  "functions": {
-    "api/db.ts": { "maxDuration": 30 },
-    "api/call.ts": { "maxDuration": 30 }
-  }
-}
