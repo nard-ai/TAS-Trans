@@ -1,4 +1,5 @@
 {
+  "title": "TAS Trans Payroll",
   "description": "An internal HR and payroll system for TAS teams to manage employee records, timekeeping, payroll, commissions, payslips, and reports in one place.",
   "robots": {
     "index": false
