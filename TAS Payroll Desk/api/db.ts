@@ -1,23 +1,14 @@
-import { payrollApi, writeJson } from "../src/server/payroll-http";
+import { jsonResponse, payrollApi, payrollProbe } from "../src/server/payroll-http";
 
-type NodeReq = {
-  method?: string;
-  body?: unknown;
-};
-
-type NodeRes = {
-  statusCode: number;
-  setHeader: (name: string, value: string) => void;
-  end: (body?: Buffer) => void;
-};
-
-function parsed(body: unknown): unknown {
-  if (body == null || body === "") return null;
-  if (typeof body === "string") return JSON.parse(body);
-  if (Buffer.isBuffer(body)) return JSON.parse(body.toString("utf8"));
-  return body;
+export async function GET(request: Request) {
+  if (request.url.includes("probe=1")) {
+    return jsonResponse(await payrollProbe());
+  }
+  return jsonResponse(await payrollApi("db", "GET", null));
 }
 
-export default async function handler(req: NodeReq, res: NodeRes) {
-  writeJson(res, await payrollApi("db", req.method || "GET", parsed(req.body)));
+export async function PUT(request: Request) {
+  const text = await request.text();
+  const body = text ? JSON.parse(text) : null;
+  return jsonResponse(await payrollApi("db", "PUT", body));
 }
