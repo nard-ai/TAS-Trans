@@ -1,0 +1,10 @@
+Line 37: Property Picture in cmdClose had an invalid file reference.
+Line 56: Property Picture in cmdAdd had an invalid file reference.
+Line 67: Property Picture in cmdEdit had an invalid file reference.
+Line 79: Property Picture in cmdSave had an invalid file reference.
+Line 90: Property Picture in cmdMoveFirst had an invalid file reference.
+Line 101: Property Picture in cmdMovePrev had an invalid file reference.
+Line 113: Property Picture in cmdCancel had an invalid file reference.
+Line 124: Property Picture in cmdDelete had an invalid file reference.
+Line 135: Property Picture in cmdMoveNext had an invalid file reference.
+Line 146: Property Picture in cmdMoveLast had an invalid file reference.

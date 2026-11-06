@@ -1,0 +1,15 @@
+Line 22: Class TabDlg.SSTab of control SSTab1 was not a loaded control class.
+Line 682: Class MSComctlLib.ListView of control ListView1 was not a loaded control class.
+Line 1243: Class MSMask.MaskEdBox of control mskStartSSS was not a loaded control class.
+Line 1277: Class MSMask.MaskEdBox of control mskEndSSS was not a loaded control class.
+Line 1311: Class MSMask.MaskEdBox of control mskStartPbig was not a loaded control class.
+Line 1345: Class MSMask.MaskEdBox of control mskEndPbig was not a loaded control class.
+Line 1379: Class MSMask.MaskEdBox of control mskStartVale was not a loaded control class.
+Line 1413: Class MSMask.MaskEdBox of control mskEndVale was not a loaded control class.
+Line 1852: Class MSMask.MaskEdBox of control mskStartContract was not a loaded control class.
+Line 1886: Class MSMask.MaskEdBox of control mskEndContract was not a loaded control class.
+Line 2282: Class MSMask.MaskEdBox of control MaskEdBox5 was not a loaded control class.
+Line 2316: Class MSMask.MaskEdBox of control MaskEdBox6 was not a loaded control class.
+Line 2560: Class MSComctlLib.ListView of control ListView1 was not a loaded control class.
+Line 2807: Class MSComctlLib.ImageList of control ImageList1 was not a loaded control class.
+Line 2825: Class MSComctlLib.Toolbar of control Toolbar1 was not a loaded control class.

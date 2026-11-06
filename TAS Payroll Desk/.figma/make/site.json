@@ -1,0 +1,10 @@
+{
+  "description": "An internal HR and payroll system for TAS teams to manage employee records, timekeeping, payroll, commissions, payslips, and reports in one place.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

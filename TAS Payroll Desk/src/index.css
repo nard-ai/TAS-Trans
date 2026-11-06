@@ -1,0 +1,145 @@
+@import "@fontsource-variable/inter";
+@import "tailwindcss";
+
+/*
+ * TAS payroll desk visual system.
+ * Only the brief's five palettes exist here; Tailwind's default colors are removed
+ * so nothing outside the palette can be used by accident.
+ */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-grey-900: #102a43;
+  --color-grey-800: #243b53;
+  --color-grey-700: #334e68;
+  --color-grey-600: #486581;
+  --color-grey-500: #627d98;
+  --color-grey-400: #829ab1;
+  --color-grey-300: #9fb3c8;
+  --color-grey-200: #bcccdc;
+  --color-grey-100: #d9e2ec;
+  --color-grey-50: #f0f4f8;
+
+  --color-blue-900: #003e6b;
+  --color-blue-800: #0a558c;
+  --color-blue-700: #0f609b;
+  --color-blue-600: #186faf;
+  --color-blue-500: #2680c2;
+  --color-blue-400: #4098d7;
+  --color-blue-300: #62b0e8;
+  --color-blue-200: #84c5f4;
+  --color-blue-100: #b6e0fe;
+  --color-blue-50: #dceffb;
+
+  --color-yellow-900: #8d2b0b;
+  --color-yellow-800: #b44d12;
+  --color-yellow-700: #cb6e17;
+  --color-yellow-600: #de911d;
+  --color-yellow-500: #f0b429;
+  --color-yellow-400: #f7c948;
+  --color-yellow-300: #fadb5f;
+  --color-yellow-200: #fce588;
+  --color-yellow-100: #fff3c4;
+  --color-yellow-50: #fffbea;
+
+  --color-cyan-900: #044e54;
+  --color-cyan-800: #0a6c74;
+  --color-cyan-700: #0e7c86;
+  --color-cyan-600: #14919b;
+  --color-cyan-500: #2cb1bc;
+  --color-cyan-400: #38bec9;
+  --color-cyan-300: #54d1db;
+  --color-cyan-200: #87eaf2;
+  --color-cyan-100: #bef8fd;
+  --color-cyan-50: #e0fcff;
+
+  --color-red-900: #610404;
+  --color-red-800: #780a0a;
+  --color-red-700: #911111;
+  --color-red-600: #a61b1b;
+  --color-red-500: #ba2525;
+  --color-red-400: #d64545;
+  --color-red-300: #e66a6a;
+  --color-red-200: #f29b9b;
+  --color-red-100: #facdcd;
+  --color-red-50: #ffeeee;
+
+  --font-*: initial;
+  --font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --text-*: initial;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 13px;
+  --text-sm--line-height: 18px;
+  --text-base: 14px;
+  --text-base--line-height: 20px;
+  --text-lg: 16px;
+  --text-lg--line-height: 22px;
+  --text-xl: 20px;
+  --text-xl--line-height: 26px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 30px;
+
+  --radius-tag: 3px;
+  --radius-ctl: 4px;
+  --radius-panel: 6px;
+
+  --shadow-pop: 0 1px 2px rgb(16 42 67 / 0.06), 0 6px 16px rgb(16 42 67 / 0.08);
+  --shadow-dialog: 0 20px 48px rgb(16 42 67 / 0.22), 0 2px 6px rgb(16 42 67 / 0.12);
+  --shadow-edge: 0 -1px 0 var(--color-grey-100), 0 -6px 14px rgb(16 42 67 / 0.05);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-grey-900);
+    background: var(--color-grey-50);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-blue-100);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-blue-400);
+    outline-offset: 1px;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    opacity: 0.55;
+  }
+}
+
+.print-only {
+  display: none;
+}
+
+/* In this system every right-aligned value is a number: money, hours, counts. */
+.text-right,
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  body {
+    background: #ffffff;
+  }
+  .print-flat {
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+}

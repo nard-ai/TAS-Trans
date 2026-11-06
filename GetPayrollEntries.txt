@@ -1,0 +1,198 @@
+USE [HRANDPAYROLL]
+GO
+
+/****** Object:  StoredProcedure [dbo].[GetPayrollEntries]    Script Date: 09/22/2018 08:38:52 ******/
+SET ANSI_NULLS OFF
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+/*
+	Procedure Name: 	GetPayrollEntries
+	Author:				Bernard O. Sahagun
+	Date Written:		April 24, 2010
+	Description:		To update records for Printing of payroll reports.
+	Updates:			Jan 17, 2015
+
+--    ' excesssplholothours = " & ChkVal(txtRDonSPL) & ", excesssplholotpay = " & ChkVal(txtAmount(19))
+ --   ' excessotsunlegalhrs = " & ChkVal(txtRDSplLgl) & ", excessotsunlegalpay = " & ChkVal(txtAmount(18))
+  --  ' otwithoutpremium = " & ChkVal(txtRDonLGL) & ", otwithoutpremiumpay = " & ChkVal(txtAmount(20))
+	 Added DedHead6 for Adjustment 2/7/2015
+	 CASE WHEN MiscFee = NULL THEN 0.00 ELSE MiscFee END, change to Variances
+*/
+
+ALTER PROCEDURE [dbo].[GetPayrollEntries] 
+@PayrollFlag Int, 		-- 1 print all entries, 0 Print only those values not equal to 0
+@PayslipFlag Int, 		-- 1 print all entries, 0 Print only those values not equal to 0
+@ClientCode Int,		-- Client code
+@StartPayDate varchar(15),	-- Start Pay Date converted in string
+@EndPayDate varchar(15),	-- End Pay Date converted in string
+@UserID varchar(30),		-- Current User ID
+@FMSFlag Int				-- flag for FMS or not
+
+AS
+
+DECLARE @UserName Varchar(20)
+
+SET NOCOUNT ON
+
+TRUNCATE TABLE tmpPayrollTemplate
+
+IF @FMSFlag = 1 -- For Driver and Conductor
+BEGIN
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead9]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead9]  DEFAULT ('Cal/Loan:') FOR [DedHead9]
+
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead2]  
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead2]  DEFAULT ('Vale:') FOR [DedHead2]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead13]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead13]  DEFAULT ('Damages:') FOR [DedHead13]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead14]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead14]  DEFAULT ('Shortages:') FOR [DedHead14]
+
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead7]  
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead7]  DEFAULT ('Assoctn:') FOR [DedHead7]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_EarnHead7]
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_EarnHead7]  DEFAULT ('Bonus:') FOR [EarnHead7]
+
+END
+ELSE -- Bring back to default
+BEGIN
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead9]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead9]  DEFAULT ('Cal/Loan:') FOR [DedHead9]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead6]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead6]  DEFAULT ('Adjmt:') FOR [DedHead6]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead13]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead13]  DEFAULT ('O/Ded:') FOR [DedHead13]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead14]  
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead14]  DEFAULT ('Planters:') FOR [DedHead14]
+
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_DedHead7]  
+--	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_DedHead7]  DEFAULT ('Assoctn:') FOR [DedHead7]
+
+	ALTER TABLE [dbo].[tmpPayrollTemplate] DROP  CONSTRAINT [DF_tmpPayrollTemplate_EarnHead7]
+	ALTER TABLE [dbo].[tmpPayrollTemplate] ADD  CONSTRAINT [DF_tmpPayrollTemplate_EarnHead7]  DEFAULT ('Tax/Refnd:') FOR [EarnHead7]
+
+
+END
+
+IF @PayrollFlag = 1 
+BEGIN
+	INSERT INTO tmpPayrollTemplate (EmployeeID, AgencyCode, ClientCode, ClientName, ClientAddress, ClientCutOff, 
+		StartPayDate, 
+		EndPayDate, 
+		EmployeeName, EmpNo, HRDepartment, CutoffNo, PrintedDate,
+		DaysPresent, NightDiffOT, NoofDays,
+		Earnings1, Earnings2, Earnings3, Earnings4, Earnings5, Earnings6, Earnings7, Earnings8, Earnings9,
+		Earnings10, Earnings11, Earnings12, Earnings13,	Earnings14, Earnings15, Earnings16, 
+		Earnings17, Earnings18,
+		GrossPay, EcolaRate,
+		Deductions1, Deductions2, 
+		Deductions3, Deductions4, 
+		Deductions5, Deductions6,
+		Deductions7, Deductions8, 
+		Deductions9, Deductions10, 
+		Deductions11, Deductions12,
+		Deductions13, Deductions14, Deductions15, Deductions16, HazardPay, UnionDues,
+		TotalDeductions, TakeHomePay, PayBasis, 
+		DedHead7, 
+		Allowance, RDSPLLglHr, RDSplLglPay,
+		RDonSPLHr, RDonSPLPay, RDonLGLHr, RDonLGLPay,
+		ReceivedDate, EntryDate)
+	SELECT EmployeeID, AgencyCode, ClientCode, ClientName, ClientAddress, ClientCutOff, 
+		DATENAME(month, StartPayDate) + ' ' + CONVERT(char(2), DAY(StartPayDate)) + ', ' + CONVERT(char(5), YEAR(StartPayDate)),
+		DATENAME(month, EndPayDate) + ' ' + CONVERT(char(2), DAY(EndPayDate)) + ', ' + CONVERT(char(5), YEAR(EndPayDate)),
+		EmployeeName, EmpNo, HRDepartment, ClientCutoffNo, CONVERT(Varchar(20), GETDATE(), 101),
+		DaysPresent, NightDiffOT, CASE WHEN DaysPresent = NULL THEN 0.00 ELSE (DaysPresent/8) END, 
+		CASE WHEN BasicPay = NULL THEN 0.00 ELSE BasicPay END, RegHolidayPay, SplHolidayPay, DailyRate, NightDiffPay, OtherIncome, TaxRefundPay, OTHours, OTPay,
+		HoursTardiness, TardinessDeduction, DaysAbsent, AbsentDeduction, TaxRefundPay, SickLeavePay, VacationLeavePay, 
+		SundayOT, SundayOTPay,
+		GrossPay, CASE WHEN Ecolapay = NULL THEN 0.00 ELSE EcolaPay END, 
+		CASE WHEN Uniform = NULL THEN 0.00 ELSE Uniform END, CASE WHEN ValewithClient = NULL THEN 0.00 ELSE ValewithClient END, 
+		CASE WHEN CashAdvance = NULL THEN 0.00 ELSE CashAdvance END, CASE WHEN SSSEmployee = NULL THEN 0.00 ELSE SSSEmployee END, 
+		CASE WHEN PHealthEmployee = NULL THEN 0.00 ELSE PHealthEmployee END, CASE WHEN Variances = NULL THEN 0.00 ELSE Variances END, 
+		CASE WHEN LMCDed = NULL THEN 0.00 ELSE LMCDed END, CASE WHEN SSSLoan = NULL THEN 0.00 ELSE SSSLoan END, 
+		CASE WHEN excesslglholotpay = NULL THEN 0.00 ELSE excesslglholotpay END, CASE WHEN PagibigEmployee = NULL THEN 0.00 ELSE PagibigEmployee END, 
+		CASE WHEN PagibigLoan = NULL THEN 0.00 ELSE PagibigLoan END, CASE WHEN WTaxAmount = NULL THEN 0.00 ELSE WTaxAmount END, 
+		CASE WHEN TASAesla = NULL THEN 0.00 ELSE TASAesla END, 
+		CASE WHEN Vale_IOU = NULL THEN 0.00 ELSE Vale_IOU END, 
+		CASE WHEN Medical = NULL THEN 0.00 ELSE Medical END, NULL, 
+		CASE WHEN HazardPay = NULL THEN 0.00 ELSE HazardPay END, 
+		CASE WHEN UnionDues = NULL THEN 0.00 ELSE UnionDues END,
+		CASE WHEN Deductions = NULL THEN 0.00 ELSE Deductions END, CASE WHEN NetPay = NULL THEN 0.00 ELSE NetPay END, PaymentBasis,
+		DedCaption,
+		Allowance, excessotsunlegalhrs, excessotsunlegalpay,
+		excesssplholothours, excesssplholotpay, otwithoutpremium, otwithoutpremiumpay,
+		CONVERT(Varchar(20), Getdate(), 101), CONVERT(Varchar(20), GETDATE(), 101)
+	FROM PayrollReport a
+	WHERE  a.ClientCode = @ClientCode AND a.StartPayDate = @StartPayDate AND a.Endpaydate = @EndPayDate
+END
+ELSE
+BEGIN
+	INSERT INTO tmpPayrollTemplate (EmployeeID, AgencyCode, ClientCode, ClientName, ClientAddress, ClientCutOff, 
+		StartPayDate, EndPayDate, 
+		EmployeeName, EmpNo, HRDepartment, CutoffNo, PrintedDate,
+		DaysPresent, NightDiffOT, NoofDays,
+		Earnings1, Earnings2, Earnings3, Earnings4, Earnings5, Earnings6, Earnings7, Earnings8, Earnings9,
+		Earnings10, Earnings11, Earnings12, Earnings13,	Earnings14, Earnings15, Earnings16, 
+		Earnings17, Earnings18,
+		GrossPay, EcolaRate,
+		Deductions1, Deductions2, 
+		Deductions3, Deductions4, 
+		Deductions5, Deductions6,
+		Deductions7, Deductions8, 
+		Deductions9, Deductions10, 
+		Deductions11, Deductions12, 
+		Deductions13, Deductions14, Deductions15, Deductions16, HazardPay, UnionDues,
+		TotalDeductions, TakeHomePay, PayBasis, 
+		DedHead7,
+		Allowance, RDSPLLglHr, RDSplLglPay,
+		RDonSPLHr, RDonSPLPay, RDonLGLHr, RDonLGLPay,
+		ReceivedDate, EntryDate)
+	SELECT EmployeeID, AgencyCode, ClientCode, ClientName, ClientAddress, ClientCutOff, 
+		DATENAME(month, StartPayDate) + ' ' + CONVERT(char(2), DAY(StartPayDate)) + ', ' + CONVERT(char(5), YEAR(StartPayDate)),
+		DATENAME(month, EndPayDate) + ' ' + CONVERT(char(2), DAY(EndPayDate)) + ', ' + CONVERT(char(5), YEAR(EndPayDate)),
+		EmployeeName, EmpNo, HRDepartment, ClientCutoffNo, CONVERT(Varchar(20), GETDATE(), 101),
+		DaysPresent, NightDiffOT, CASE WHEN DaysPresent = NULL THEN 0.00 ELSE (DaysPresent/8) END, 
+		CASE WHEN BasicPay = NULL THEN 0.00 ELSE BasicPay END, RegHolidayPay, SplHolidayPay, DailyRate, NightDiffPay, OtherIncome, TaxRefundPay, OTHours, OTPay,
+		HoursTardiness, TardinessDeduction, DaysAbsent, AbsentDeduction, TaxRefundPay, SickLeavePay, VacationLeavePay, 
+		SundayOT, SundayOTPay,
+		GrossPay, CASE WHEN Ecolapay = NULL THEN 0.00 ELSE EcolaPay END, 
+		CASE WHEN Uniform = NULL THEN 0.00 ELSE Uniform END, CASE WHEN ValewithClient = NULL THEN 0.00 ELSE ValewithClient END, 
+		CASE WHEN CashAdvance = NULL THEN 0.00 ELSE CashAdvance END, CASE WHEN SSSEmployee = NULL THEN 0.00 ELSE SSSEmployee END, 
+		CASE WHEN PHealthEmployee = NULL THEN 0.00 ELSE PHealthEmployee END, CASE WHEN Variances = NULL THEN 0.00 ELSE Variances END, 
+		CASE WHEN LMCDed = NULL THEN 0.00 ELSE LMCDed END, CASE WHEN SSSLoan = NULL THEN 0.00 ELSE SSSLoan END, 
+		CASE WHEN excesslglholotpay = NULL THEN 0.00 ELSE excesslglholotpay END, CASE WHEN PagibigEmployee = NULL THEN 0.00 ELSE PagibigEmployee END, 
+		CASE WHEN PagibigLoan = NULL THEN 0.00 ELSE PagibigLoan END, CASE WHEN WTaxAmount = NULL THEN 0.00 ELSE WTaxAmount END, 
+		CASE WHEN TASAesla = NULL THEN 0.00 ELSE TASAesla END, 
+		CASE WHEN Vale_IOU = NULL THEN 0.00 ELSE Vale_IOU END,
+		CASE WHEN Medical = NULL THEN 0.00 ELSE Medical END, NULL, 
+		CASE WHEN HazardPay = NULL THEN 0.00 ELSE HazardPay END, 
+		CASE WHEN UnionDues = NULL THEN 0.00 ELSE UnionDues END,
+		CASE WHEN Deductions = NULL THEN 0.00 ELSE Deductions END, CASE WHEN NetPay = NULL THEN 0.00 ELSE NetPay END, PaymentBasis,
+		DedCaption,
+		Allowance, excessotsunlegalhrs, excessotsunlegalpay,
+		excesssplholothours, excesssplholotpay, otwithoutpremium, otwithoutpremiumpay,
+		CONVERT(Varchar(20), Getdate(), 101), CONVERT(Varchar(20), GETDATE(), 101)
+	FROM PayrollReportMaster a
+	WHERE  a.ClientCode = @ClientCode AND a.StartPayDate = @StartPayDate AND a.Endpaydate = @EndPayDate
+
+END
+
+
+
+
+
+
+GO
+
+

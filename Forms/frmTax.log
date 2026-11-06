@@ -1,0 +1,7 @@
+Line 42: Property TabPicture(0) in SSTab1 had an invalid file reference.
+Line 290: Property Picture in ListImage1 had an invalid file reference.
+Line 328: Property ButtonPicture1 in tbrDemo had an invalid file reference.
+Line 334: Property ButtonPicture2 in tbrDemo had an invalid file reference.
+Line 335: Property ButtonPictureOver2 in tbrDemo had an invalid file reference.
+Line 341: Property ButtonPicture3 in tbrDemo had an invalid file reference.
+Line 342: Property ButtonPictureOver3 in tbrDemo had an invalid file reference.

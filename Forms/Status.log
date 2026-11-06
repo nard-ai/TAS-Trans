@@ -1,0 +1,10 @@
+Line 20: Class MSComctlLib.ProgressBar of control Bar1 was not a loaded control class.
+Line 55: Class MSComCtl2.Animation of control Animation1 was not a loaded control class.
+Line 26: The property name _ExtentX in Bar1 is invalid.
+Line 27: The property name _ExtentY in Bar1 is invalid.
+Line 28: The property name _Version in Bar1 is invalid.
+Line 61: The property name _ExtentX in Animation1 is invalid.
+Line 62: The property name _ExtentY in Animation1 is invalid.
+Line 63: The property name _Version in Animation1 is invalid.
+Line 64: The property name FullWidth in Animation1 is invalid.
+Line 65: The property name FullHeight in Animation1 is invalid.

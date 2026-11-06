@@ -1,0 +1,8 @@
+Line 104: Class Crystal.CrystalReport of control crystlInqry was not a loaded control class.
+Line 107: The property name _ExtentX in crystlInqry is invalid.
+Line 108: The property name _ExtentY in crystlInqry is invalid.
+Line 109: The property name _Version in crystlInqry is invalid.
+Line 110: The property name WindowControlBox in crystlInqry is invalid.
+Line 111: The property name WindowMaxButton in crystlInqry is invalid.
+Line 112: The property name WindowMinButton in crystlInqry is invalid.
+Line 113: The property name PrintFileLinesPerPage in crystlInqry is invalid.
