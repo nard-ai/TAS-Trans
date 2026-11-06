@@ -100,7 +100,7 @@ export function Login() {
 
   return (
     <div className="flex min-h-screen flex-col bg-grey-50">
-      <div className="flex h-14 items-center border-b border-grey-100 bg-white px-6">
+      <div className="flex h-14 items-center border-b border-grey-100 bg-white px-4 sm:px-6">
         <Brand />
       </div>
 
@@ -112,7 +112,7 @@ export function Login() {
             className="rounded-panel border border-grey-100 bg-white shadow-pop"
             aria-labelledby="login-title"
           >
-            <div className="border-b border-grey-100 px-6 py-4">
+            <div className="border-b border-grey-100 px-4 py-4 sm:px-6">
               <h1 id="login-title" className="text-lg font-semibold text-grey-900">
                 Log in
               </h1>
@@ -121,7 +121,7 @@ export function Login() {
               </p>
             </div>
 
-            <div className="space-y-4 px-6 py-5">
+            <div className="space-y-4 px-4 py-5 sm:px-6">
               {state === "failed" && (
                 <Notice tone="error" title="Login failed.">
                   Check the username and password.{" "}
@@ -203,7 +203,7 @@ export function Login() {
               />
             </div>
 
-            <div className="flex items-center gap-2 rounded-b-panel border-t border-grey-100 bg-grey-50 px-6 py-3">
+            <div className="flex flex-wrap items-center gap-2 rounded-b-panel border-t border-grey-100 bg-grey-50 px-4 py-3 sm:px-6">
               {state === "active" && (
                 <Button onClick={onDeactivate} busy={busy === "deactivate"} disabled={!!busy}>
                   Deactivate user

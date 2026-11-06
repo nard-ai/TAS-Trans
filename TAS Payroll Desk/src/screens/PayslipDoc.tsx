@@ -52,7 +52,7 @@ export function PayslipDoc({
   const days = record.attendance.hoursWorked / 8;
   return (
     <article className="print-flat mx-auto w-full max-w-[720px] rounded-panel border border-grey-100 bg-white text-sm">
-      <header className="flex items-start justify-between gap-6 border-b border-grey-200 px-6 py-4">
+      <header className="flex flex-wrap items-start justify-between gap-3 border-b border-grey-200 px-4 py-4 sm:gap-6 sm:px-6">
         <div>
           {company?.name ? (
             <>
@@ -72,7 +72,7 @@ export function PayslipDoc({
           </div>
         </div>
       </header>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1.5 border-b border-grey-100 px-6 py-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 border-b border-grey-100 px-4 py-3 sm:grid-cols-4 sm:gap-x-6 sm:px-6">
         <Meta label="Employee" value={fullName(emp)} />
         <Meta label="Employee number" value={emp.empNo} />
         <Meta label="Client" value={client.name} />
@@ -92,7 +92,7 @@ export function PayslipDoc({
           className="border-t border-grey-100 sm:border-l sm:border-t-0"
         />
       </div>
-      <footer className="flex items-center justify-between border-t-2 border-grey-800 px-6 py-3">
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t-2 border-grey-800 px-4 py-3 sm:px-6">
         <span className="text-xs text-grey-600">
           Processed by {record.processedBy} · {fmtDate(record.savedAt)}
         </span>

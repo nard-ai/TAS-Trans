@@ -81,4 +81,9 @@ export const Icon = {
       <path d="M8 3.5v9M3.5 8h9" />
     </svg>
   ),
+  menu: (p: P) => (
+    <svg {...base(p)}>
+      <path d="M3 4.5h10M3 8h10M3 11.5h10" />
+    </svg>
+  ),
 };
